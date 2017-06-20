@@ -1,0 +1,37 @@
+########################
+# Welcome to Ryuu-Tama #
+########################
+
+Choose a class:
+
+1. Healer
+2. Hunter
+3. Merchant
+4. Minstrel
+
+> 
+Choose a type:
+
+1. Attack
+2. Magic
+3. Technical
+
+> 
+Enter a name: 
+Choose your stats:
+
+1. Well-Rounded (6666)
+2. Standard (4668)
+3. Specialist (4488)
+
+> 
+Arrange your stats by importance
+(e.g: 'dex int spi str'
+
+str (Strength)
+dex (Dexterity)
+int (Intelligence)
+spi (Spirit)
+
+> You are Guy (Level 1, Magic-type Minstrel)
+Stats: STR:8 DEX:6 INT:6 SPI:4
