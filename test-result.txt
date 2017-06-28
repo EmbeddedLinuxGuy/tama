@@ -34,4 +34,4 @@ int (Intelligence)
 spi (Spirit)
 
 > You are Guy (Level 1, Magic-type Minstrel)
-Stats: STR:8 DEX:6 INT:6 SPI:4
+Stats: {"str":8,"dex":6,"int":6,"spi":4}
