@@ -78,16 +78,16 @@ rl.on('line', function (cmd) {
 	++step;
     } else {
 	// do bounds checking
-	const zo = R.zipObj(choices[ranks].split(" "),
-			    stat_ranks[choices[stats]-1]);
-
+	fs.writeFileSync(json_out,
+			 JSON.stringify(R.zipObj(
+			     choices[ranks].split(" "),
+			     stat_ranks[choices[stats]-1])));
 	tty_out.write("You are " + choices[name] + " (Level 1, "
 		      + types[choices[type]-1] + "-type "
 		      + classes[choices[klass]-1] + ")\n"
 		      + "Stats: "
-		      + JSON.stringify(zo)
+		      + fs.readFileSync(json_out)
 		      + "\n");
-	fs.writeFileSync(json_out, JSON.stringify(zo));
 	process.exit(0);
     }
 });
