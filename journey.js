@@ -28,6 +28,8 @@ var q = [ [ "\nRoll a condition check (str:"
 	  ] ];
 
 const rnd = (n) => Math.ceil(Math.random()*n);
+var day = 1;
+tty_out.write("\nDay " + day + "\n-------");
 tty_out.write(q[0][0]);
 rl.on('line', function (cmd) {
     const str = rnd(char_obj.str);
@@ -47,5 +49,7 @@ rl.on('line', function (cmd) {
     } else if (condition >= 10) {
 	console.log("You feel great!");
     }
+    ++day;
+    tty_out.write("\nDay " + day + "\n------");
     tty_out.write(q[0][0]);
 });
