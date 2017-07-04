@@ -1,0 +1,25 @@
+{
+  "name": "tama-yaru",
+  "version": "0.0.1",
+  "description": "Tama Yaru: a game of travel and adventure",
+  "main": "main.js",
+  "scripts": {
+    "test": "./test.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EmbeddedLinuxGuy/tama.git"
+  },
+  "keywords": [
+    "game",
+    "rpg",
+    "roleplaying",
+    "travel"
+  ],
+  "author": "Jesse D Zbikowski",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EmbeddedLinuxGuy/tama/issues"
+  },
+  "homepage": "https://github.com/EmbeddedLinuxGuy/tama#readme"
+}
