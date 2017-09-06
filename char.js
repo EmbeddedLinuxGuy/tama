@@ -19,21 +19,10 @@ const rl = readline.createInterface({
   terminal: false
 });
 
-const q0 = [
-    "########################",
-    "# Welcome to Ryuu-Tama #",
-    "########################\n\n"
-];
 tty_out.write(q0.join("\n"));
 var choices = [];
 var step = 0;
 
-const q1 = [ "Choose a class:\n",
-	     "1. Healer",
-	     "2. Hunter",
-	     "3. Merchant",
-	     "4. Minstrel",
-	     "\n> " ];
 tty_out.write(q1.join("\n"));
 
 const classes = [ "Healer", "Hunter", "Merchant", "Minstrel" ];
