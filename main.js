@@ -18,7 +18,7 @@ const q1 = [ "Choose a class:\n",
 var q = [ [
 
 ] ];
-const rnd = (n) => Math.ceil(Math.random()*n);
+const rnd = (n) => (1+Math.floor(Math.random()*n));
 var day = 1;
 var tty_out;
 var char_obj;
