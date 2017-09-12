@@ -4,7 +4,7 @@
   "description": "Tama Yaru: a game of travel and adventure",
   "main": "main.js",
   "scripts": {
-    "test": "./test.sh"
+    "test": "echo Test moved to tama-text"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,9 @@
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/EmbeddedLinuxGuy/tama/issues"
+  },
+  "dependencies": {
+    "ramda": ""
   },
   "homepage": "https://github.com/EmbeddedLinuxGuy/tama#readme"
 }
