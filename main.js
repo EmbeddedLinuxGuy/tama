@@ -2,6 +2,14 @@
 
 const R = require("ramda");
 const fs = require("fs");
+//const S = require("sanctuary");
+
+// arguments
+
+// tty_out: supports "write"
+// json_outfile: name of character file
+
+// 'handle': should be called after input is complete
 
 const q0 = [
     "########################",
@@ -19,12 +27,13 @@ var q = [ [
 
 ] ];
 const rnd = (n) => (1+Math.floor(Math.random()*n));
-var day = 1;
 var tty_out;
 var char_obj;
 var json_out;
 
 const start_adventure = function () {
+    char_obj = JSON.parse(fs.readFileSync(json_out, "utf8"));
+
     q[0][0] = "\nRoll a condition check (str:"
 	+ char_obj.str
 	+ " + spi:"
@@ -33,22 +42,21 @@ const start_adventure = function () {
     ;
 
     tty_out.write(JSON.stringify(char_obj));
-    tty_out.write("\n\nDay " + day + "\n-------");
+    tty_out.write("\n\nDay " + (1+char_obj.days) + "\n-------");
     tty_out.write(q[0][0]);
 };
 
 exports.init = function(tty, json_filename) {
-    tty.write(q0.join("\n"));
-    tty.write("Creating new character [" + json_filename + "]\n\n");
-    tty.write(q1.join("\n"));
-    tty_out = tty;
     json_out = json_filename;
-};
-
-exports.start = function(tty, json_char, json_outfile) {
-    char_obj = JSON.parse(json_char);
     tty_out = tty;
-    start_adventure();
+
+    if (fs.existsSync(json_out)) {
+	start_adventure();
+    } else {
+	tty.write(q0.join("\n"));
+	tty.write("Creating new character\n\n");
+	tty.write(q1.join("\n"));
+    }
 };
 
 var choices = [];
@@ -96,10 +104,9 @@ const build_char = function(cmd) {
     } else {
 	// do bounds checking
 	fs.writeFileSync(json_out,
-			 JSON.stringify(R.zipObj(
-			     choices[ranks].split(" "),
-			     stat_ranks[choices[stats]-1])));
-	char_obj = JSON.parse(fs.readFileSync(json_out));
+			 JSON.stringify(R.assoc("days", 0,
+						R.zipObj(choices[ranks].split(" "),
+							 stat_ranks[choices[stats]-1]))));
 	tty_out.write("You are " + choices[name] + " (Level 1, "
 		      + types[choices[type]-1] + "-type "
 		      + classes[choices[klass]-1] + ")\n");
@@ -112,6 +119,7 @@ exports.handle = function(cmd) {
 	build_char(cmd);
 	return;
     }
+    char_obj = JSON.parse(fs.readFileSync(json_out, "utf8"));
     const str = rnd(char_obj.str);
     const spi = rnd(char_obj.spi);
     const condition = str + spi;
@@ -129,7 +137,9 @@ exports.handle = function(cmd) {
     } else if (condition >= 10) {
 	console.log("You feel great!");
     }
-    ++day;
-    tty_out.write("\nDay " + day + "\n------");
+
+    ++(char_obj.days);
+    fs.writeFileSync(json_out, JSON.stringify(char_obj));
+    tty_out.write("\nDay " + (1+char_obj.days) + "\n------");
     tty_out.write(q[0][0]);
 }
