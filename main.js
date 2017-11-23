@@ -34,12 +34,8 @@ var json_out;
 const start_adventure = function () {
     char_obj = JSON.parse(fs.readFileSync(json_out, "utf8"));
 
-    q[0][0] = "\nRoll a condition check (str:"
-	+ char_obj.str
-	+ " + spi:"
-	+ char_obj.spi
-	+ ") [hit enter]>"
-    ;
+    q[0][0] = `\nRoll a condition check (str:${char_obj.str} + spi:${char_obj.spi})`
+	+ ` [hit enter]>`;
 
     tty_out.write(JSON.stringify(char_obj));
     tty_out.write("\n\nDay " + (1+char_obj.days) + "\n-------");
@@ -124,27 +120,14 @@ exports.handle = function(cmd, alt_tty) {
     const str = rnd(char_obj.str);
     const spi = rnd(char_obj.spi);
     const condition = str + spi;
-    tty_out.write("\nYou rolled: "
-		+ str
-	        + " + "
-		+ spi
-		+ " = "
-		  + condition
-		 + "\n");
-    if (condition == 2) {
-	tty_out.write("You are "
-		    + [ "injured", "poisoned", "muddled",
-			"exhausted" ][rnd(4)-1]
-		    + "! Severity: 4\n");
-    } else if (condition >= 10) {
-	tty_out.write("You feel great!\n");
-    }
-
-    tty_out.write("Next Day\n");
     ++(char_obj.days);
-  //  console.log("writing [" + json_out + "]");
     fs.writeFileSync(json_out, JSON.stringify(char_obj));
-//    console.log("Saved json_out");
-    tty_out.write("\nDay " + (1+char_obj.days) + "\n------\n");
-    tty_out.write(q[0][0] + "\n");
+    tty_out.write(`\nYou rolled: ${str} + ${spi} = ${condition}\n`
+		  + ((condition == 2) ? `You are ${[ "injured", "poisoned", "muddled",
+			"exhausted" ][rnd(4)-1]}! Severity: 4\n`
+		     : ``)
+		  + ((condition >= 10) ? `You feel great!\n` : ``)
+		  + `Next Day\nDay ${1+char_obj.days}\n------\n
+                     ${q[0][0]}\n`
+		 );
 }
