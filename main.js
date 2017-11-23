@@ -114,7 +114,8 @@ const build_char = function(cmd) {
     }
 };
 
-exports.handle = function(cmd) {
+exports.handle = function(cmd, alt_tty) {
+    if (alt_tty) { tty_out = alt_tty; }
     if (char_obj === undefined) {
 	build_char(cmd);
 	return;
@@ -123,23 +124,27 @@ exports.handle = function(cmd) {
     const str = rnd(char_obj.str);
     const spi = rnd(char_obj.spi);
     const condition = str + spi;
-    console.log("\nYou rolled: "
+    tty_out.write("\nYou rolled: "
 		+ str
 	        + " + "
 		+ spi
 		+ " = "
-		+ condition);
+		  + condition
+		 + "\n");
     if (condition == 2) {
-	console.log("You are "
+	tty_out.write("You are "
 		    + [ "injured", "poisoned", "muddled",
 			"exhausted" ][rnd(4)-1]
-		    + "! Severity: 4");
+		    + "! Severity: 4\n");
     } else if (condition >= 10) {
-	console.log("You feel great!");
+	tty_out.write("You feel great!\n");
     }
 
+    tty_out.write("Next Day\n");
     ++(char_obj.days);
+  //  console.log("writing [" + json_out + "]");
     fs.writeFileSync(json_out, JSON.stringify(char_obj));
-    tty_out.write("\nDay " + (1+char_obj.days) + "\n------");
-    tty_out.write(q[0][0]);
+//    console.log("Saved json_out");
+    tty_out.write("\nDay " + (1+char_obj.days) + "\n------\n");
+    tty_out.write(q[0][0] + "\n");
 }
