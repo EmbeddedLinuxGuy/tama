@@ -11,6 +11,7 @@ const fs = require("fs");
 
 // 'handle': should be called after input is complete
 
+// move q0, q1, q to static file
 const q0 = [
     "########################",
     "# Welcome to Ryuu-Tama #",
@@ -27,13 +28,18 @@ var q = [ [
 
 ] ];
 const rnd = (n) => (1+Math.floor(Math.random()*n));
-var tty_out;
+
+// can this live locally in one function (combined init/handle)?
 var char_obj;
+
+// this is already passed on each request so can be eliminated (?)
+var tty_out;
+
+// needs to be passed on each request and eliminated as a global
 var json_out;
 
 const start_adventure = function () {
     char_obj = JSON.parse(fs.readFileSync(json_out, "utf8"));
-
     q[0][0] = `\nRoll a condition check (str:${char_obj.str} + spi:${char_obj.spi})`
 	+ ` [hit enter]>`;
 
@@ -47,16 +53,23 @@ exports.init = function(tty, json_filename) {
     tty_out = tty;
 
     if (fs.existsSync(json_out)) {
-	start_adventure();
+	char_obj = JSON.parse(fs.readFileSync(json_out, "utf8"));
+	if (char_obj.chargen_done) {
+	    start_adventure();
+	} else {
+	    // continue character creation
+	    tty.write("Resuming character creation at step ${char_obj.step}\n");
+	}
     } else {
 	tty.write(q0.join("\n"));
 	tty.write("Creating new character\n\n");
+	fs.writeFileSync(json_out, JSON.stringify({"step": 0, "choices": []}));
+	// first prompt: class
 	tty.write(q1.join("\n"));
     }
 };
 
-var choices = [];
-var step = 0;
+// move q2 to static file
 
 const q2 = { "type":
 	     [ "\nChoose a type:\n",
@@ -92,31 +105,43 @@ const stat_ranks = [ [ 6, 6, 6, 6 ], [ 8, 6, 6, 4], [8, 8, 4, 4] ];
 const classes = [ "Healer", "Hunter", "Merchant", "Minstrel" ];
 const types = [ "Attack", "Magic", "Technical" ];
 
+// old behavior: build up 4 steps, then write file
+
+// new behavior:
+// 1. extract next step from char.json
+// 2. send next step query to client (from steps.json)
+// 3. wait for response from client
+// 4. parse client response and write char.json with updated step
+
 const build_char = function(cmd) {
-    choices.push(cmd);
+    char_obj.choices.push(cmd);
+    let step = char_obj.step;
     if (step < 4) {
 	tty_out.write(q2[keys[step]].join("\n"));
-	++step;
+	++(char_obj.step);
+        fs.writeFileSync(json_out, JSON.stringify(char_obj));
     } else {
 	// do bounds checking
 	fs.writeFileSync(json_out,
-			 JSON.stringify(R.assoc("days", 0,
-						R.zipObj(choices[ranks].split(" "),
-							 stat_ranks[choices[stats]-1]))));
-	tty_out.write("You are " + choices[name] + " (Level 1, "
-		      + types[choices[type]-1] + "-type "
-		      + classes[choices[klass]-1] + ")\n");
+			 JSON.stringify(
+			     R.assoc("chargen_done", true,
+				     R.assoc("days", 0,
+					     R.zipObj(char_obj.choices[ranks].split(" "),
+						      stat_ranks[char_obj.choices[stats]-1])))));
+	tty_out.write("You are " + char_obj.choices[name] + " (Level 1, "
+		      + types[char_obj.choices[type]-1] + "-type "
+		      + classes[char_obj.choices[klass]-1] + ")\n");
 	start_adventure();
     }
 };
 
 exports.handle = function(cmd, alt_tty) {
     if (alt_tty) { tty_out = alt_tty; }
-    if (char_obj === undefined) {
+    char_obj = JSON.parse(fs.readFileSync(json_out, "utf8"));
+    if (! char_obj.chargen_done) {
 	build_char(cmd);
 	return;
     }
-    char_obj = JSON.parse(fs.readFileSync(json_out, "utf8"));
     const str = rnd(char_obj.str);
     const spi = rnd(char_obj.spi);
     const condition = str + spi;
