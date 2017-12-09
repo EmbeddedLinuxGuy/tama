@@ -85,7 +85,7 @@ const q2 = { "type":
 		 "\n> " ],
 	     "ranks": [
 		 "\nArrange your stats by importance",
-		 "(e.g: 'dex int spi str'\n",
+		 "(e.g: 'dex int spi str')\n",
 		 "str (Strength)",
 		 "dex (Dexterity)",
 		 "int (Intelligence)",
